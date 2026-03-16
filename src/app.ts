@@ -212,6 +212,80 @@ function extractSubPath(url: string, prefix: string): void {
 }
 
 // ---------------------------------------------------------------------------
+// Page buffer — module-level string variable that void functions write to.
+// Perry async handlers can't build strings (NaN-boxed pointer corruption).
+// Instead, void functions append to this buffer, then handler sends it.
+// ---------------------------------------------------------------------------
+
+let _page = '';
+
+function pageReset(): void { _page = ''; }
+function pageAdd(s: string): void { _page += s; }
+
+// ---------------------------------------------------------------------------
+// Page builders — module-level void functions that write to _page buffer.
+// Called from async handlers after DB queries. Only take number params
+// (numbers survive async; strings don't).
+// ---------------------------------------------------------------------------
+
+function buildHomePage(pluginCount: number, dlCount: number, pubCount: number): void {
+  _page = HEAD_OPEN;
+  _page += '<title>Hone Marketplace — Plugins for Hone IDE</title>';
+  _page += '<meta name="description" content="Browse and install plugins for Hone IDE. Formatters, linters, themes, language support, AI tools, and more.">';
+  _page += '<meta property="og:title" content="Hone Marketplace">';
+  _page += '<meta property="og:description" content="Discover plugins that supercharge your development workflow">';
+  _page += '<meta property="og:url" content="https://marketplace.hone.codes/">';
+  _page += '<meta property="og:type" content="website">';
+  _page += '<link rel="canonical" href="https://marketplace.hone.codes/">';
+  _page += CSS_LINK;
+  _page += '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Hone Marketplace","url":"https://marketplace.hone.codes/","potentialAction":{"@type":"SearchAction","target":"https://marketplace.hone.codes/search?q={search_term_string}","query-input":"required name=search_term_string"}}</script>';
+  _page += '</head><body>';
+  _page += NAV;
+  _page += '<section class="hero"><div class="hero-inner">';
+  _page += '<h1>Hone Marketplace</h1>';
+  _page += '<p class="hero-sub">Discover plugins that supercharge your development workflow</p>';
+  _page += '<form class="hero-search" action="/search" method="get">';
+  _page += '<input type="text" name="q" placeholder="Search plugins..." autocomplete="off" aria-label="Search plugins">';
+  _page += '<button type="submit">Search</button>';
+  _page += '</form>';
+  _page += '<div class="hero-stats">';
+  formatNum(pluginCount);
+  _page += '<span><strong>';
+  _page += _formatted;
+  _page += '</strong> plugins</span>';
+  formatNum(dlCount);
+  _page += '<span><strong>';
+  _page += _formatted;
+  _page += '</strong> downloads</span>';
+  formatNum(pubCount);
+  _page += '<span><strong>';
+  _page += _formatted;
+  _page += '</strong> publishers</span>';
+  _page += '</div>';
+  _page += '</div></section>';
+  _page += '<section class="section"><div class="section-inner">';
+  _page += '<h2>Categories</h2><div class="category-grid">';
+  _page += '<a href="/categories/Languages" class="category-card"><span class="cat-icon">&#128172;</span>Languages</a>';
+  _page += '<a href="/categories/Formatters" class="category-card"><span class="cat-icon">&#9998;</span>Formatters</a>';
+  _page += '<a href="/categories/Linters" class="category-card"><span class="cat-icon">&#128270;</span>Linters</a>';
+  _page += '<a href="/categories/Themes" class="category-card"><span class="cat-icon">&#127912;</span>Themes</a>';
+  _page += '<a href="/categories/Keymaps" class="category-card"><span class="cat-icon">&#9000;</span>Keymaps</a>';
+  _page += '<a href="/categories/Snippets" class="category-card"><span class="cat-icon">&#128203;</span>Snippets</a>';
+  _page += '<a href="/categories/Debuggers" class="category-card"><span class="cat-icon">&#128027;</span>Debuggers</a>';
+  _page += '<a href="/categories/Testing" class="category-card"><span class="cat-icon">&#9989;</span>Testing</a>';
+  _page += '<a href="/categories/Git" class="category-card"><span class="cat-icon">&#128200;</span>Git</a>';
+  _page += '<a href="/categories/AI" class="category-card"><span class="cat-icon">&#129302;</span>AI</a>';
+  _page += '<a href="/categories/Data" class="category-card"><span class="cat-icon">&#128202;</span>Data</a>';
+  _page += '<a href="/categories/Visualization" class="category-card"><span class="cat-icon">&#128200;</span>Visualization</a>';
+  _page += '<a href="/categories/Other" class="category-card"><span class="cat-icon">&#128230;</span>Other</a>';
+  _page += '</div></div></section>';
+  _page += '</main>';
+  _page += FOOTER;
+  _page += '<script src="/static/search.js"></script>';
+  _page += '</body></html>';
+}
+
+// ---------------------------------------------------------------------------
 // Fastify app
 // ---------------------------------------------------------------------------
 
@@ -239,148 +313,18 @@ app.get('/robots.txt', async (request: any, reply: any) => {
 app.get('/', async (request: any, reply: any) => {
   reply.header('Content-Type', 'text/html; charset=utf-8');
 
-  const [featured]: any = await pool.execute(
-    'SELECT name, displayName, description, downloads, ratingSum, ratingCount, iconUrl FROM plugins WHERE featured = 1 ORDER BY downloads DESC LIMIT 6'
-  );
-  const [recent]: any = await pool.execute(
-    'SELECT name, displayName, description, downloads, ratingSum, ratingCount FROM plugins ORDER BY publishedAt DESC LIMIT 6'
-  );
   const [statsRows]: any = await pool.execute('SELECT COUNT(*) as cnt FROM plugins');
   const [dlRows]: any = await pool.execute('SELECT COALESCE(SUM(downloads), 0) as total FROM plugins');
   const [pubRows]: any = await pool.execute('SELECT COUNT(*) as cnt FROM publishers');
 
-  let h = HEAD_OPEN;
-  h += '<title>Hone Marketplace — Plugins for Hone IDE</title>';
-  h += '<meta name="description" content="Browse and install plugins for Hone IDE. Formatters, linters, themes, language support, AI tools, and more.">';
-  h += '<meta property="og:title" content="Hone Marketplace">';
-  h += '<meta property="og:description" content="Discover plugins that supercharge your development workflow">';
-  h += '<meta property="og:url" content="https://marketplace.hone.codes/">';
-  h += '<meta property="og:type" content="website">';
-  h += '<link rel="canonical" href="https://marketplace.hone.codes/">';
-  h += CSS_LINK;
-  h += '<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Hone Marketplace","url":"https://marketplace.hone.codes/","potentialAction":{"@type":"SearchAction","target":"https://marketplace.hone.codes/search?q={search_term_string}","query-input":"required name=search_term_string"}}</script>';
-  h += '</head><body>';
-  h += NAV;
-
-  // Hero
-  h += '<section class="hero"><div class="hero-inner">';
-  h += '<h1>Hone Marketplace</h1>';
-  h += '<p class="hero-sub">Discover plugins that supercharge your development workflow</p>';
-  h += '<form class="hero-search" action="/search" method="get">';
-  h += '<input type="text" name="q" placeholder="Search plugins..." autocomplete="off" aria-label="Search plugins">';
-  h += '<button type="submit">Search</button>';
-  h += '</form>';
-  h += '<div class="hero-stats">';
+  // Store DB values as numbers (survive async)
   const pluginCount = Number(statsRows[0].cnt);
   const dlCount = Number(dlRows[0].total);
   const pubCount = Number(pubRows[0].cnt);
-  formatNum(pluginCount);
-  h += '<span><strong>';
-  h += _formatted;
-  h += '</strong> plugins</span>';
-  formatNum(dlCount);
-  h += '<span><strong>';
-  h += _formatted;
-  h += '</strong> downloads</span>';
-  formatNum(pubCount);
-  h += '<span><strong>';
-  h += _formatted;
-  h += '</strong> publishers</span>';
-  h += '</div>';
-  h += '</div></section>';
 
-  // Featured
-  if (featured.length > 0) {
-    h += '<section class="section"><div class="section-inner">';
-    h += '<h2>Featured Plugins</h2><div class="plugin-grid">';
-    for (let i = 0; i < featured.length; i++) {
-      escapeHtml(String(featured[i].displayName));
-      const dn = _escaped;
-      escapeHtml(String(featured[i].description));
-      const desc = _escaped;
-      h += '<a href="/plugins/';
-      h += String(featured[i].name);
-      h += '" class="plugin-card">';
-      h += '<div class="card-icon">';
-      const iconVal = featured[i].iconUrl;
-      if (iconVal !== null && String(iconVal).length > 0) {
-        h += '<img src="';
-        h += String(iconVal);
-        h += '" alt="" width="48" height="48" loading="lazy">';
-      } else {
-        h += '<div class="card-icon-default">&#9881;</div>';
-      }
-      h += '</div>';
-      h += '<h3>';
-      h += dn;
-      h += '</h3><p>';
-      h += desc;
-      h += '</p><div class="card-meta">';
-      formatNum(Number(featured[i].downloads));
-      h += '<span>';
-      h += _formatted;
-      h += ' downloads</span>';
-      const rc = Number(featured[i].ratingCount);
-      if (rc > 0) {
-        const rs = Number(featured[i].ratingSum);
-        const avg = Math.floor((rs * 10) / rc) / 10;
-        setStars(avg);
-        h += '<span class="stars">';
-        h += _stars;
-        h += '</span>';
-      }
-      h += '</div></a>';
-    }
-    h += '</div></div></section>';
-  }
-
-  // Recent
-  if (recent.length > 0) {
-    h += '<section class="section section-alt"><div class="section-inner">';
-    h += '<h2>Recently Added</h2><div class="plugin-grid">';
-    for (let i = 0; i < recent.length; i++) {
-      escapeHtml(String(recent[i].displayName));
-      const dn = _escaped;
-      escapeHtml(String(recent[i].description));
-      const desc = _escaped;
-      h += '<a href="/plugins/';
-      h += String(recent[i].name);
-      h += '" class="plugin-card"><h3>';
-      h += dn;
-      h += '</h3><p>';
-      h += desc;
-      h += '</p><div class="card-meta">';
-      formatNum(Number(recent[i].downloads));
-      h += '<span>';
-      h += _formatted;
-      h += ' downloads</span></div></a>';
-    }
-    h += '</div></div></section>';
-  }
-
-  // Categories
-  h += '<section class="section"><div class="section-inner">';
-  h += '<h2>Categories</h2><div class="category-grid">';
-  h += '<a href="/categories/Languages" class="category-card"><span class="cat-icon">&#128172;</span>Languages</a>';
-  h += '<a href="/categories/Formatters" class="category-card"><span class="cat-icon">&#9998;</span>Formatters</a>';
-  h += '<a href="/categories/Linters" class="category-card"><span class="cat-icon">&#128270;</span>Linters</a>';
-  h += '<a href="/categories/Themes" class="category-card"><span class="cat-icon">&#127912;</span>Themes</a>';
-  h += '<a href="/categories/Keymaps" class="category-card"><span class="cat-icon">&#9000;</span>Keymaps</a>';
-  h += '<a href="/categories/Snippets" class="category-card"><span class="cat-icon">&#128203;</span>Snippets</a>';
-  h += '<a href="/categories/Debuggers" class="category-card"><span class="cat-icon">&#128027;</span>Debuggers</a>';
-  h += '<a href="/categories/Testing" class="category-card"><span class="cat-icon">&#9989;</span>Testing</a>';
-  h += '<a href="/categories/Git" class="category-card"><span class="cat-icon">&#128200;</span>Git</a>';
-  h += '<a href="/categories/AI" class="category-card"><span class="cat-icon">&#129302;</span>AI</a>';
-  h += '<a href="/categories/Data" class="category-card"><span class="cat-icon">&#128202;</span>Data</a>';
-  h += '<a href="/categories/Visualization" class="category-card"><span class="cat-icon">&#128200;</span>Visualization</a>';
-  h += '<a href="/categories/Other" class="category-card"><span class="cat-icon">&#128230;</span>Other</a>';
-  h += '</div></div></section>';
-
-  h += '</main>';
-  h += FOOTER;
-  h += '<script src="/static/search.js"></script>';
-  h += '</body></html>';
-  reply.send(h);
+  // Build page via module-level buffer (void calls — no string returns in async)
+  buildHomePage(pluginCount, dlCount, pubCount);
+  reply.send(_page);
 });
 
 // ===== PLUGIN DETAIL PAGE =====
