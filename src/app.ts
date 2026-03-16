@@ -13,7 +13,8 @@
 
 import Fastify from 'fastify';
 import mysql2 from 'mysql2/promise';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
+import { execSync } from 'child_process';
 
 // ---------------------------------------------------------------------------
 // Config
@@ -50,6 +51,9 @@ try {
     if (key === 'DATA_DIR') dataDir = val;
   }
 } catch (e: any) { /* no config file — use defaults */ }
+
+// Ensure data directories exist
+try { execSync('mkdir -p ' + dataDir + '/pages'); } catch (e: any) { /* ignore */ }
 
 // ---------------------------------------------------------------------------
 // Database
@@ -310,21 +314,20 @@ app.get('/robots.txt', async (request: any, reply: any) => {
 
 // ===== HOME PAGE =====
 
+// Pre-render home page at startup (sync — all string ops work)
+buildHomePage(0, 0, 0);
+try { writeFileSync(dataDir + '/pages/home.html', _page); } catch (e: any) { /* ignore */ }
+
 app.get('/', async (request: any, reply: any) => {
   reply.header('Content-Type', 'text/html; charset=utf-8');
-
-  const [statsRows]: any = await pool.execute('SELECT COUNT(*) as cnt FROM plugins');
-  const [dlRows]: any = await pool.execute('SELECT COALESCE(SUM(downloads), 0) as total FROM plugins');
-  const [pubRows]: any = await pool.execute('SELECT COUNT(*) as cnt FROM publishers');
-
-  // Store DB values as numbers (survive async)
-  const pluginCount = Number(statsRows[0].cnt);
-  const dlCount = Number(dlRows[0].total);
-  const pubCount = Number(pubRows[0].cnt);
-
-  // Build page via module-level buffer (void calls — no string returns in async)
-  buildHomePage(pluginCount, dlCount, pubCount);
-  reply.send(_page);
+  try {
+    let homePath = dataDir;
+    homePath += '/pages/home.html';
+    const content = readFileSync(homePath, 'utf-8');
+    reply.send(content);
+  } catch (e: any) {
+    reply.send(_page);
+  }
 });
 
 // ===== PLUGIN DETAIL PAGE =====
