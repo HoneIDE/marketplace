@@ -1,4 +1,5 @@
 /* Hone Marketplace — Dark theme, mobile-first */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   --bg: #0d1117;
@@ -12,9 +13,9 @@
   --text: #e6edf3;
   --text-muted: #8b949e;
   --text-dim: #656d76;
-  --accent: #58a6ff;
-  --accent-hover: #79c0ff;
-  --accent-bg: rgba(56, 139, 253, 0.15);
+  --accent: #00D4AA;
+  --accent-hover: #00FFD0;
+  --accent-bg: rgba(0, 212, 170, 0.15);
   --green: #3fb950;
   --yellow: #d29922;
   --red: #f85149;
@@ -24,8 +25,9 @@
   --radius-sm: 4px;
   --shadow: 0 1px 3px rgba(0,0,0,0.3);
   --max-width: 1200px;
-  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-  --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  --font: 'Inter', 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
 @media (prefers-color-scheme: light) {
@@ -41,9 +43,9 @@
     --text: #1f2328;
     --text-muted: #656d76;
     --text-dim: #8b949e;
-    --accent: #0969da;
-    --accent-hover: #0550ae;
-    --accent-bg: rgba(9, 105, 218, 0.1);
+    --accent: #00A88A;
+    --accent-hover: #00D4AA;
+    --accent-bg: rgba(0, 168, 138, 0.1);
     --shadow: 0 1px 3px rgba(31,35,40,0.12);
   }
 }
@@ -109,14 +111,14 @@ img { max-width: 100%; height: auto; }
 .nav-links a:hover { color: var(--text); }
 
 .btn-cta {
-  background: var(--accent);
+  background: linear-gradient(135deg, #00D4AA, #00B4D8);
   color: #fff !important;
   padding: 6px 16px;
   border-radius: var(--radius-sm);
   font-weight: 500;
   font-size: 0.85rem;
 }
-.btn-cta:hover { background: var(--accent-hover); }
+.btn-cta:hover { background: linear-gradient(135deg, #00FFD0, #00D4AA); }
 
 .nav-toggle {
   display: none;
@@ -154,7 +156,7 @@ img { max-width: 100%; height: auto; }
 }
 
 .hero-inner { max-width: 640px; margin: 0 auto; }
-.hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; }
+.hero h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 12px; font-family: var(--font-display); background: linear-gradient(135deg, #00D4AA, #00B4D8, #0077B6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .hero-sub { color: var(--text-muted); font-size: 1.15rem; margin-bottom: 32px; }
 
 .hero-search {
@@ -179,15 +181,16 @@ img { max-width: 100%; height: auto; }
 
 .hero-search button {
   padding: 12px 24px;
-  background: var(--accent);
+  background: linear-gradient(135deg, #00D4AA, #00B4D8);
   color: #fff;
   border: none;
   border-radius: 0 var(--radius) var(--radius) 0;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
-.hero-search button:hover { background: var(--accent-hover); }
+.hero-search button:hover { opacity: 0.85; }
 
 .hero-stats {
   display: flex;
@@ -209,7 +212,7 @@ img { max-width: 100%; height: auto; }
 .section { padding: 48px 20px; }
 .section-alt { background: var(--bg-alt); }
 .section-inner { max-width: var(--max-width); margin: 0 auto; }
-.section-inner h2 { font-size: 1.5rem; margin-bottom: 24px; }
+.section-inner h2 { font-size: 1.5rem; margin-bottom: 24px; font-family: var(--font-display); }
 
 /* ===== Plugin Grid ===== */
 
@@ -355,7 +358,7 @@ img { max-width: 100%; height: auto; }
   font-weight: 500;
 }
 .tier-1 { background: rgba(63, 185, 80, 0.15); color: var(--green); }
-.tier-2 { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+.tier-2 { background: rgba(0, 212, 170, 0.15); color: var(--accent); }
 .tier-3 { background: rgba(248, 81, 73, 0.15); color: var(--red); }
 
 .plugin-actions {
@@ -367,7 +370,7 @@ img { max-width: 100%; height: auto; }
 }
 
 .btn-primary, .btn-install {
-  background: var(--accent);
+  background: linear-gradient(135deg, #00D4AA, #00B4D8);
   color: #fff;
   padding: 10px 24px;
   border: none;
@@ -375,8 +378,9 @@ img { max-width: 100%; height: auto; }
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
-.btn-primary:hover, .btn-install:hover { background: var(--accent-hover); color: #fff; }
+.btn-primary:hover, .btn-install:hover { opacity: 0.85; color: #fff; }
 
 .install-cmd {
   font-family: var(--mono);

@@ -74,7 +74,7 @@ HEAD_OPEN += '<meta name="viewport" content="width=device-width,initial-scale=1"
 const CSS_LINK = '<link rel="stylesheet" href="/static/style.css">';
 
 let NAV = '<nav class="navbar"><div class="nav-inner">';
-NAV += '<a href="/" class="nav-brand"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg> Hone Marketplace</a>';
+NAV += '<a href="/" class="nav-brand"><svg width="20" height="24" viewBox="0 0 48 56"><defs><linearGradient id="mg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00D4AA"/><stop offset="60%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#0077B6"/></linearGradient></defs><polygon points="24,0 0,28 24,56" fill="#0077B6" opacity="0.65"/><polygon points="24,0 48,28 24,56" fill="url(#mg)"/><line x1="24" y1="0" x2="24" y2="56" stroke="#00FFD0" stroke-width="1.5" opacity="0.9"/><circle cx="24" cy="0" r="2.5" fill="#00FFD0" opacity="0.85"/></svg> Hone Marketplace</a>';
 NAV += '<div class="nav-links">';
 NAV += '<a href="/search">Browse</a>';
 NAV += '<a href="/categories/Languages">Categories</a>';
@@ -231,7 +231,7 @@ app.get('/robots.txt', async (request: any, reply: any) => {
   let r = 'User-agent: *\n';
   r += 'Allow: /\n';
   r += 'Sitemap: https://marketplace.hone.codes/sitemap.xml\n';
-  return r;
+  reply.send(r);
 });
 
 // ===== HOME PAGE =====
@@ -380,7 +380,7 @@ app.get('/', async (request: any, reply: any) => {
   h += FOOTER;
   h += '<script src="/static/search.js"></script>';
   h += '</body></html>';
-  return h;
+  reply.send(h);
 });
 
 // ===== PLUGIN DETAIL PAGE =====
@@ -420,7 +420,7 @@ app.get('/plugins/*', async (request: any, reply: any) => {
     h += '&quot; does not exist.</p><a href="/" class="btn-primary">Back to Marketplace</a></main>';
     h += FOOTER;
     h += '</body></html>';
-    return h;
+    reply.send(h);
   }
 
   const row = rows[0];
@@ -806,7 +806,7 @@ app.get('/plugins/*', async (request: any, reply: any) => {
   h += FOOTER;
   h += '<script src="/static/search.js"></script>';
   h += '</body></html>';
-  return h;
+  reply.send(h);
 });
 
 // ===== SEARCH PAGE =====
@@ -1036,7 +1036,7 @@ app.get('/search', async (request: any, reply: any) => {
   h += FOOTER;
   h += '<script src="/static/search.js"></script>';
   h += '</body></html>';
-  return h;
+  reply.send(h);
 });
 
 // ===== CATEGORY PAGE =====
@@ -1170,7 +1170,7 @@ app.get('/categories/*', async (request: any, reply: any) => {
   h += '</main>';
   h += FOOTER;
   h += '</body></html>';
-  return h;
+  reply.send(h);
 });
 
 // ===== PUBLISHER PAGE =====
@@ -1202,7 +1202,7 @@ app.get('/publishers/*', async (request: any, reply: any) => {
     h += '<a href="/" class="btn-primary">Back to Marketplace</a></main>';
     h += FOOTER;
     h += '</body></html>';
-    return h;
+    reply.send(h);
   }
 
   const pub = pubRows[0];
@@ -1314,7 +1314,7 @@ app.get('/publishers/*', async (request: any, reply: any) => {
   h += '</main>';
   h += FOOTER;
   h += '</body></html>';
-  return h;
+  reply.send(h);
 });
 
 // ===== SITEMAP =====
@@ -1364,7 +1364,7 @@ app.get('/sitemap.xml', async (request: any, reply: any) => {
   }
 
   x += '</urlset>';
-  return x;
+  reply.send(x);
 });
 
 // ===== REST API =====
@@ -1527,7 +1527,7 @@ app.get('/api/v1/plugins', async (request: any, reply: any) => {
   j += ',"pageSize":';
   j += String(pageSize);
   j += '}';
-  return j;
+  reply.send(j);
 });
 
 // GET /api/v1/plugins/* — plugin detail or sub-resources
@@ -1583,7 +1583,7 @@ app.get('/api/v1/plugins/*', async (request: any, reply: any) => {
       j += '"}';
     }
     j += ']';
-    return j;
+    reply.send(j);
   }
 
   // Full plugin detail
@@ -1670,7 +1670,7 @@ app.get('/api/v1/plugins/*', async (request: any, reply: any) => {
   }
 
   j += '}';
-  return j;
+  reply.send(j);
 });
 
 // POST /api/v1/plugins — publish a plugin
@@ -1727,7 +1727,7 @@ app.post('/api/v1/plugins', async (request: any, reply: any) => {
     r += '","buildId":"build-';
     r += String(now);
     r += '","message":"Plugin updated"}';
-    return r;
+    reply.send(r);
   }
 
   // Create new
@@ -1750,7 +1750,7 @@ app.post('/api/v1/plugins', async (request: any, reply: any) => {
   r += '","buildId":"build-';
   r += String(now);
   r += '","message":"Plugin published"}';
-  return r;
+  reply.send(r);
 });
 
 // POST /api/v1/plugins/report — report a plugin (via query params)
@@ -1849,7 +1849,7 @@ app.post('/api/v1/updates/check', async (request: any, reply: any) => {
   }
 
   j += ']}';
-  return j;
+  reply.send(j);
 });
 
 // GET /api/v1/categories
@@ -1886,7 +1886,7 @@ app.get('/api/v1/featured', async (request: any, reply: any) => {
     j += '}';
   }
   j += ']';
-  return j;
+  reply.send(j);
 });
 
 // GET /api/v1/stats
@@ -1906,7 +1906,7 @@ app.get('/api/v1/stats', async (request: any, reply: any) => {
   j += ',"updatedAt":"';
   j += String(Math.floor(Date.now() / 1000));
   j += '"}';
-  return j;
+  reply.send(j);
 });
 
 // ===== PACKAGE DOWNLOADS =====
