@@ -320,14 +320,9 @@ try { writeFileSync(dataDir + '/pages/home.html', _page); } catch (e: any) { /* 
 
 app.get('/', async (request: any, reply: any) => {
   reply.header('Content-Type', 'text/html; charset=utf-8');
-  try {
-    let homePath = dataDir;
-    homePath += '/pages/home.html';
-    const content = readFileSync(homePath, 'utf-8');
-    reply.send(content);
-  } catch (e: any) {
-    reply.send(_page);
-  }
+  let homePath = dataDir;
+  homePath += '/pages/home.html';
+  return readFileSync(homePath, 'utf-8');
 });
 
 // ===== PLUGIN DETAIL PAGE =====
