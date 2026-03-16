@@ -318,12 +318,14 @@ app.get('/robots.txt', async (request: any, reply: any) => {
 buildHomePage(0, 0, 0);
 try { writeFileSync(dataDir + '/pages/home.html', _page); } catch (e: any) { /* ignore */ }
 
-app.get('/', async (request: any, reply: any) => {
+app.get('/', handleHome);
+
+function handleHome(request: any, reply: any): string {
   reply.header('Content-Type', 'text/html; charset=utf-8');
   let homePath = dataDir;
   homePath += '/pages/home.html';
   return readFileSync(homePath, 'utf-8');
-});
+}
 
 // ===== PLUGIN DETAIL PAGE =====
 
