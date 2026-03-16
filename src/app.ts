@@ -320,11 +320,11 @@ try { writeFileSync(dataDir + '/pages/home.html', _page); } catch (e: any) { /* 
 
 app.get('/', handleHome);
 
-function handleHome(request: any, reply: any): string {
+function handleHome(request: any, reply: any): void {
   reply.header('Content-Type', 'text/html; charset=utf-8');
   let homePath = dataDir;
   homePath += '/pages/home.html';
-  return readFileSync(homePath, 'utf-8');
+  reply.send(readFileSync(homePath, 'utf-8'));
 }
 
 // ===== PLUGIN DETAIL PAGE =====
