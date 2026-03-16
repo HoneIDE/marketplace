@@ -1,0 +1,19 @@
+{
+  "name": "@honeide/marketplace",
+  "version": "0.1.0",
+  "description": "Hone Marketplace — Perry-compiled native binary",
+  "main": "src/app.ts",
+  "perry": {
+    "entry": "src/app.ts",
+    "nativeModules": ["fastify", "mysql2/promise"]
+  },
+  "scripts": {
+    "build": "perry compile src/app.ts --output hone-marketplace",
+    "test": "bun test",
+    "typecheck": "bun run tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "license": "MIT"
+}
