@@ -11,6 +11,7 @@
  * - Auth via ?token= query param (not Authorization header)
  */
 
+import { t } from 'perry/i18n';
 import Fastify from 'fastify';
 import mysql2 from 'mysql2/promise';
 import { readFileSync, writeFileSync } from 'fs';
@@ -78,22 +79,48 @@ HEAD_OPEN += '<meta name="viewport" content="width=device-width,initial-scale=1"
 const CSS_LINK = '<link rel="stylesheet" href="/static/style.css">';
 
 let NAV = '<nav class="navbar"><div class="nav-inner">';
-NAV += '<a href="/" class="nav-brand"><svg width="20" height="24" viewBox="0 0 48 56"><defs><linearGradient id="mg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00D4AA"/><stop offset="60%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#0077B6"/></linearGradient></defs><polygon points="24,0 0,28 24,56" fill="#0077B6" opacity="0.65"/><polygon points="24,0 48,28 24,56" fill="url(#mg)"/><line x1="24" y1="0" x2="24" y2="56" stroke="#00FFD0" stroke-width="1.5" opacity="0.9"/><circle cx="24" cy="0" r="2.5" fill="#00FFD0" opacity="0.85"/></svg> Hone Marketplace</a>';
+NAV += '<a href="/" class="nav-brand"><svg width="20" height="24" viewBox="0 0 48 56"><defs><linearGradient id="mg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00D4AA"/><stop offset="60%" stop-color="#00B4D8"/><stop offset="100%" stop-color="#0077B6"/></linearGradient></defs><polygon points="24,0 0,28 24,56" fill="#0077B6" opacity="0.65"/><polygon points="24,0 48,28 24,56" fill="url(#mg)"/><line x1="24" y1="0" x2="24" y2="56" stroke="#00FFD0" stroke-width="1.5" opacity="0.9"/><circle cx="24" cy="0" r="2.5" fill="#00FFD0" opacity="0.85"/></svg> ';
+NAV += t('Hone Marketplace');
+NAV += '</a>';
 NAV += '<div class="nav-links">';
-NAV += '<a href="/search">Browse</a>';
-NAV += '<a href="/categories/Languages">Categories</a>';
-NAV += '<a href="https://hone.dev" class="btn-cta">Get Hone</a>';
+NAV += '<a href="/search">';
+NAV += t('Browse');
+NAV += '</a>';
+NAV += '<a href="/categories/Languages">';
+NAV += t('Categories');
+NAV += '</a>';
+NAV += '<a href="https://hone.dev" class="btn-cta">';
+NAV += t('Get Hone');
+NAV += '</a>';
 NAV += '</div>';
 NAV += '<button class="nav-toggle" aria-label="Menu" onclick="document.querySelector(\'.nav-links\').classList.toggle(\'open\')">&#9776;</button>';
 NAV += '</div></nav>';
 
 let FOOTER = '<footer class="site-footer"><div class="footer-inner">';
 FOOTER += '<div class="footer-grid">';
-FOOTER += '<div class="footer-col"><h4>Hone IDE</h4><ul><li><a href="https://hone.dev">Download</a></li><li><a href="https://hone.dev/docs">Documentation</a></li><li><a href="https://github.com/nicholasgasior/hone">Source Code</a></li></ul></div>';
-FOOTER += '<div class="footer-col"><h4>Marketplace</h4><ul><li><a href="/search">Browse Plugins</a></li><li><a href="/categories/Languages">Categories</a></li><li><a href="/api/v1/stats">API</a></li></ul></div>';
-FOOTER += '<div class="footer-col"><h4>Community</h4><ul><li><a href="https://discord.gg/hone">Discord</a></li><li><a href="https://twitter.com/honedev">Twitter</a></li></ul></div>';
+FOOTER += '<div class="footer-col"><h4>';
+FOOTER += t('Hone IDE');
+FOOTER += '</h4><ul><li><a href="https://hone.dev">';
+FOOTER += t('Download');
+FOOTER += '</a></li><li><a href="https://hone.dev/docs">';
+FOOTER += t('Documentation');
+FOOTER += '</a></li><li><a href="https://github.com/nicholasgasior/hone">';
+FOOTER += t('Source Code');
+FOOTER += '</a></li></ul></div>';
+FOOTER += '<div class="footer-col"><h4>';
+FOOTER += t('Marketplace');
+FOOTER += '</h4><ul><li><a href="/search">';
+FOOTER += t('Browse Plugins');
+FOOTER += '</a></li><li><a href="/categories/Languages">';
+FOOTER += t('Categories');
+FOOTER += '</a></li><li><a href="/api/v1/stats">API</a></li></ul></div>';
+FOOTER += '<div class="footer-col"><h4>';
+FOOTER += t('Community');
+FOOTER += '</h4><ul><li><a href="https://discord.gg/hone">Discord</a></li><li><a href="https://twitter.com/honedev">Twitter</a></li></ul></div>';
 FOOTER += '</div>';
-FOOTER += '<div class="footer-copy"><p>&#169; 2026 Hone. All rights reserved.</p></div>';
+FOOTER += '<div class="footer-copy"><p>';
+FOOTER += t('Copyright 2026 Hone. All rights reserved.');
+FOOTER += '</p></div>';
 FOOTER += '</div></footer>';
 
 // ---------------------------------------------------------------------------
@@ -154,10 +181,10 @@ function setStars(rating: number): void {
 let _tierLabel = '';
 
 function setTierLabel(tier: number): void {
-  if (tier === 1) _tierLabel = 'UI Only';
-  else if (tier === 2) _tierLabel = 'Standard';
-  else if (tier === 3) _tierLabel = 'High Privilege';
-  else _tierLabel = 'Unknown';
+  if (tier === 1) _tierLabel = t('UI Only');
+  else if (tier === 2) _tierLabel = t('Standard');
+  else if (tier === 3) _tierLabel = t('High Privilege');
+  else _tierLabel = t('Unknown');
 }
 
 // Format number with commas (void, writes _formatted)
@@ -234,10 +261,18 @@ function pageAdd(s: string): void { _page += s; }
 
 function buildHomePage(pluginCount: number, dlCount: number, pubCount: number): void {
   _page = HEAD_OPEN;
-  _page += '<title>Hone Marketplace — Plugins for Hone IDE</title>';
-  _page += '<meta name="description" content="Browse and install plugins for Hone IDE. Formatters, linters, themes, language support, AI tools, and more.">';
-  _page += '<meta property="og:title" content="Hone Marketplace">';
-  _page += '<meta property="og:description" content="Discover plugins that supercharge your development workflow">';
+  _page += '<title>';
+  _page += t('Hone Marketplace — Plugins for Hone IDE');
+  _page += '</title>';
+  _page += '<meta name="description" content="';
+  _page += t('Browse and install plugins for Hone IDE. Formatters, linters, themes, language support, AI tools, and more.');
+  _page += '">';
+  _page += '<meta property="og:title" content="';
+  _page += t('Hone Marketplace');
+  _page += '">';
+  _page += '<meta property="og:description" content="';
+  _page += t('Discover plugins that supercharge your development workflow');
+  _page += '">';
   _page += '<meta property="og:url" content="https://marketplace.hone.codes/">';
   _page += '<meta property="og:type" content="website">';
   _page += '<link rel="canonical" href="https://marketplace.hone.codes/">';
@@ -246,42 +281,82 @@ function buildHomePage(pluginCount: number, dlCount: number, pubCount: number): 
   _page += '</head><body>';
   _page += NAV;
   _page += '<section class="hero"><div class="hero-inner">';
-  _page += '<h1>Hone Marketplace</h1>';
-  _page += '<p class="hero-sub">Discover plugins that supercharge your development workflow</p>';
+  _page += '<h1>';
+  _page += t('Hone Marketplace');
+  _page += '</h1>';
+  _page += '<p class="hero-sub">';
+  _page += t('Discover plugins that supercharge your development workflow');
+  _page += '</p>';
   _page += '<form class="hero-search" action="/search" method="get">';
-  _page += '<input type="text" name="q" placeholder="Search plugins..." autocomplete="off" aria-label="Search plugins">';
-  _page += '<button type="submit">Search</button>';
+  _page += '<input type="text" name="q" placeholder="';
+  _page += t('Search plugins...');
+  _page += '" autocomplete="off" aria-label="';
+  _page += t('Search plugins');
+  _page += '">';
+  _page += '<button type="submit">';
+  _page += t('Search');
+  _page += '</button>';
   _page += '</form>';
   _page += '<div class="hero-stats">';
   formatNum(pluginCount);
   _page += '<span><strong>';
   _page += _formatted;
-  _page += '</strong> plugins</span>';
+  _page += '</strong> ';
+  _page += t('plugins');
+  _page += '</span>';
   formatNum(dlCount);
   _page += '<span><strong>';
   _page += _formatted;
-  _page += '</strong> downloads</span>';
+  _page += '</strong> ';
+  _page += t('downloads');
+  _page += '</span>';
   formatNum(pubCount);
   _page += '<span><strong>';
   _page += _formatted;
-  _page += '</strong> publishers</span>';
+  _page += '</strong> ';
+  _page += t('publishers');
+  _page += '</span>';
   _page += '</div>';
   _page += '</div></section>';
   _page += '<section class="section"><div class="section-inner">';
-  _page += '<h2>Categories</h2><div class="category-grid">';
-  _page += '<a href="/categories/Languages" class="category-card"><span class="cat-icon">&#128172;</span>Languages</a>';
-  _page += '<a href="/categories/Formatters" class="category-card"><span class="cat-icon">&#9998;</span>Formatters</a>';
-  _page += '<a href="/categories/Linters" class="category-card"><span class="cat-icon">&#128270;</span>Linters</a>';
-  _page += '<a href="/categories/Themes" class="category-card"><span class="cat-icon">&#127912;</span>Themes</a>';
-  _page += '<a href="/categories/Keymaps" class="category-card"><span class="cat-icon">&#9000;</span>Keymaps</a>';
-  _page += '<a href="/categories/Snippets" class="category-card"><span class="cat-icon">&#128203;</span>Snippets</a>';
-  _page += '<a href="/categories/Debuggers" class="category-card"><span class="cat-icon">&#128027;</span>Debuggers</a>';
-  _page += '<a href="/categories/Testing" class="category-card"><span class="cat-icon">&#9989;</span>Testing</a>';
+  _page += '<h2>';
+  _page += t('Categories');
+  _page += '</h2><div class="category-grid">';
+  _page += '<a href="/categories/Languages" class="category-card"><span class="cat-icon">&#128172;</span>';
+  _page += t('Languages');
+  _page += '</a>';
+  _page += '<a href="/categories/Formatters" class="category-card"><span class="cat-icon">&#9998;</span>';
+  _page += t('Formatters');
+  _page += '</a>';
+  _page += '<a href="/categories/Linters" class="category-card"><span class="cat-icon">&#128270;</span>';
+  _page += t('Linters');
+  _page += '</a>';
+  _page += '<a href="/categories/Themes" class="category-card"><span class="cat-icon">&#127912;</span>';
+  _page += t('Themes');
+  _page += '</a>';
+  _page += '<a href="/categories/Keymaps" class="category-card"><span class="cat-icon">&#9000;</span>';
+  _page += t('Keymaps');
+  _page += '</a>';
+  _page += '<a href="/categories/Snippets" class="category-card"><span class="cat-icon">&#128203;</span>';
+  _page += t('Snippets');
+  _page += '</a>';
+  _page += '<a href="/categories/Debuggers" class="category-card"><span class="cat-icon">&#128027;</span>';
+  _page += t('Debuggers');
+  _page += '</a>';
+  _page += '<a href="/categories/Testing" class="category-card"><span class="cat-icon">&#9989;</span>';
+  _page += t('Testing');
+  _page += '</a>';
   _page += '<a href="/categories/Git" class="category-card"><span class="cat-icon">&#128200;</span>Git</a>';
   _page += '<a href="/categories/AI" class="category-card"><span class="cat-icon">&#129302;</span>AI</a>';
-  _page += '<a href="/categories/Data" class="category-card"><span class="cat-icon">&#128202;</span>Data</a>';
-  _page += '<a href="/categories/Visualization" class="category-card"><span class="cat-icon">&#128200;</span>Visualization</a>';
-  _page += '<a href="/categories/Other" class="category-card"><span class="cat-icon">&#128230;</span>Other</a>';
+  _page += '<a href="/categories/Data" class="category-card"><span class="cat-icon">&#128202;</span>';
+  _page += t('Data');
+  _page += '</a>';
+  _page += '<a href="/categories/Visualization" class="category-card"><span class="cat-icon">&#128200;</span>';
+  _page += t('Visualization');
+  _page += '</a>';
+  _page += '<a href="/categories/Other" class="category-card"><span class="cat-icon">&#128230;</span>';
+  _page += t('Other');
+  _page += '</a>';
   _page += '</div></div></section>';
   _page += '</main>';
   _page += FOOTER;
@@ -354,14 +429,26 @@ app.get('/plugins/*', async (request: any, reply: any) => {
   if (rows.length === 0) {
     reply.status(404);
     let h = HEAD_OPEN;
-    h += '<title>Not Found | Hone Marketplace</title>';
+    h += '<title>';
+    h += t('Not Found');
+    h += ' | ';
+    h += t('Hone Marketplace');
+    h += '</title>';
     h += CSS_LINK;
     h += '</head><body>';
     h += NAV;
-    h += '<main class="container"><h1>Plugin not found</h1><p>The plugin &quot;';
+    h += '<main class="container"><h1>';
+    h += t('Plugin not found');
+    h += '</h1><p>';
+    h += t('The plugin');
+    h += ' &quot;';
     escapeHtml(pluginName);
     h += _escaped;
-    h += '&quot; does not exist.</p><a href="/" class="btn-primary">Back to Marketplace</a></main>';
+    h += '&quot; ';
+    h += t('does not exist.');
+    h += '</p><a href="/" class="btn-primary">';
+    h += t('Back to Marketplace');
+    h += '</a></main>';
     h += FOOTER;
     h += '</body></html>';
     reply.send(h);
@@ -512,7 +599,9 @@ app.get('/plugins/*', async (request: any, reply: any) => {
     escapeHtml(pubDisplayName.length > 0 ? pubDisplayName : pubUsername);
     h += _escaped;
     if (pubTier === 'domain' || pubTier === 'organization') {
-      h += ' <span class="verified-badge" title="Verified">&#10003;</span>';
+      h += ' <span class="verified-badge" title="';
+      h += t('Verified');
+      h += '">&#10003;</span>';
     }
     h += '</a>';
   } else if (author.length > 0) {
@@ -544,7 +633,9 @@ app.get('/plugins/*', async (request: any, reply: any) => {
   h += '<div class="plugin-actions">';
   h += '<button class="btn-primary btn-install" onclick="copyInstall(\'';
   h += pluginName;
-  h += '\')">Install</button>';
+  h += '\')">';
+  h += t('Install');
+  h += '</button>';
   h += '<div class="install-cmd"><code>hone plugin install ';
   h += pluginName;
   h += '</code></div>';
@@ -556,29 +647,41 @@ app.get('/plugins/*', async (request: any, reply: any) => {
   if (sub.length === 0) {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '" class="tab active">README</a>';
+    h += '" class="tab active">';
+    h += t('README');
+    h += '</a>';
   } else {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '" class="tab">README</a>';
+    h += '" class="tab">';
+    h += t('README');
+    h += '</a>';
   }
   if (sub === 'versions') {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '/versions" class="tab active">Versions</a>';
+    h += '/versions" class="tab active">';
+    h += t('Versions');
+    h += '</a>';
   } else {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '/versions" class="tab">Versions</a>';
+    h += '/versions" class="tab">';
+    h += t('Versions');
+    h += '</a>';
   }
   if (sub === 'capabilities') {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '/capabilities" class="tab active">Capabilities</a>';
+    h += '/capabilities" class="tab active">';
+    h += t('Capabilities');
+    h += '</a>';
   } else {
     h += '<a href="/plugins/';
     h += pluginName;
-    h += '/capabilities" class="tab">Capabilities</a>';
+    h += '/capabilities" class="tab">';
+    h += t('Capabilities');
+    h += '</a>';
   }
   h += '</div>';
 
@@ -588,9 +691,13 @@ app.get('/plugins/*', async (request: any, reply: any) => {
 
   if (sub === 'versions') {
     // Version history
-    h += '<h2>Version History</h2>';
+    h += '<h2>';
+    h += t('Version History');
+    h += '</h2>';
     if (versions.length === 0) {
-      h += '<p>No versions published yet.</p>';
+      h += '<p>';
+      h += t('No versions published yet.');
+      h += '</p>';
     } else {
       h += '<div class="version-list">';
       for (let vi = 0; vi < versions.length; vi++) {
@@ -629,24 +736,36 @@ app.get('/plugins/*', async (request: any, reply: any) => {
     }
   } else if (sub === 'capabilities') {
     // Capabilities
-    h += '<h2>Capabilities</h2>';
+    h += '<h2>';
+    h += t('Capabilities');
+    h += '</h2>';
     setTierLabel(tier);
-    h += '<div class="cap-tier"><strong>Security Tier:</strong> ';
+    h += '<div class="cap-tier"><strong>';
+    h += t('Security Tier:');
+    h += '</strong> ';
     h += _tierLabel;
     h += '</div>';
     h += '<div class="cap-info">';
     if (tier === 1) {
-      h += '<p>This plugin runs in UI-only mode. It can modify the editor appearance but cannot access the filesystem, network, or shell.</p>';
+      h += '<p>';
+      h += t('This plugin runs in UI-only mode. It can modify the editor appearance but cannot access the filesystem, network, or shell.');
+      h += '</p>';
     } else if (tier === 2) {
-      h += '<p>This plugin has standard permissions. It can read/write files in the workspace, access the network, and use language servers.</p>';
+      h += '<p>';
+      h += t('This plugin has standard permissions. It can read/write files in the workspace, access the network, and use language servers.');
+      h += '</p>';
     } else if (tier === 3) {
-      h += '<p>This plugin requires elevated permissions. It can execute shell commands, access system APIs, and modify global settings. Review carefully before installing.</p>';
+      h += '<p>';
+      h += t('This plugin requires elevated permissions. It can execute shell commands, access system APIs, and modify global settings. Review carefully before installing.');
+      h += '</p>';
     }
     h += '</div>';
     // Show capabilities from JSON
     const capRaw = String(row.capabilities || '[]');
     if (capRaw.length > 4) {
-      h += '<h3>Requested Capabilities</h3><ul class="cap-list">';
+      h += '<h3>';
+      h += t('Requested Capabilities');
+      h += '</h3><ul class="cap-list">';
       let capInQuote = 0;
       let capStart = 0;
       for (let ci = 0; ci < capRaw.length; ci++) {
@@ -672,7 +791,9 @@ app.get('/plugins/*', async (request: any, reply: any) => {
       h += _escaped;
       h += '</pre></div>';
     } else {
-      h += '<p class="no-readme">No README provided.</p>';
+      h += '<p class="no-readme">';
+      h += t('No README provided.');
+      h += '</p>';
     }
   }
 
@@ -680,34 +801,48 @@ app.get('/plugins/*', async (request: any, reply: any) => {
 
   // Sidebar
   h += '<aside class="plugin-sidebar">';
-  h += '<div class="sidebar-section"><h4>Details</h4><dl>';
+  h += '<div class="sidebar-section"><h4>';
+  h += t('Details');
+  h += '</h4><dl>';
   if (license.length > 0) {
-    h += '<dt>License</dt><dd>';
+    h += '<dt>';
+    h += t('License');
+    h += '</dt><dd>';
     escapeHtml(license);
     h += _escaped;
     h += '</dd>';
   }
   if (repository.length > 0) {
-    h += '<dt>Repository</dt><dd><a href="';
+    h += '<dt>';
+    h += t('Repository');
+    h += '</dt><dd><a href="';
     h += repository;
     h += '" rel="noopener">';
     escapeHtml(repository);
     h += _escaped;
     h += '</a></dd>';
   }
-  h += '<dt>Downloads</dt><dd>';
+  h += '<dt>';
+  h += t('Downloads');
+  h += '</dt><dd>';
   formatNum(downloads);
   h += _formatted;
   h += '</dd>';
-  h += '<dt>Version</dt><dd>';
+  h += '<dt>';
+  h += t('Version');
+  h += '</dt><dd>';
   h += latestVersion;
   h += '</dd>';
-  h += '<dt>Tier</dt><dd>';
+  h += '<dt>';
+  h += t('Tier');
+  h += '</dt><dd>';
   h += _tierLabel;
   h += '</dd>';
   h += '</dl></div>';
   if (tagsStr.length > 0) {
-    h += '<div class="sidebar-section"><h4>Tags</h4><div class="tag-list">';
+    h += '<div class="sidebar-section"><h4>';
+    h += t('Tags');
+    h += '</h4><div class="tag-list">';
     // Render tags as links
     let tagBuf = '';
     for (let ti = 0; ti < tagsStr.length; ti++) {
@@ -816,17 +951,21 @@ app.get('/search', async (request: any, reply: any) => {
   let h = HEAD_OPEN;
   h += '<title>';
   if (query.length > 0) {
-    h += 'Search: ';
+    h += t('Search');
+    h += ': ';
     escapeHtml(query);
     h += _escaped;
     h += ' | ';
   } else {
-    h += 'Browse Plugins | ';
+    h += t('Browse Plugins');
+    h += ' | ';
   }
-  h += 'Hone Marketplace</title>';
-  h += '<meta name="description" content="Search Hone IDE plugins';
+  h += t('Hone Marketplace');
+  h += '</title>';
+  h += '<meta name="description" content="';
+  h += t('Search Hone IDE plugins');
   if (query.length > 0) {
-    h += ' for ';
+    h += ' ';
     escapeHtml(query);
     h += _escaped;
   }
@@ -843,55 +982,76 @@ app.get('/search', async (request: any, reply: any) => {
   h += '<div class="search-header">';
   h += '<h1>';
   if (query.length > 0) {
-    h += 'Results for &quot;';
+    h += t('Results for');
+    h += ' &quot;';
     escapeHtml(query);
     h += _escaped;
     h += '&quot;';
   } else {
-    h += 'Browse Plugins';
+    h += t('Browse Plugins');
   }
   h += '</h1>';
   h += '<form class="search-form" action="/search" method="get">';
   h += '<input type="text" name="q" value="';
   escapeHtml(query);
   h += _escaped;
-  h += '" placeholder="Search plugins..." autocomplete="off">';
-  h += '<button type="submit">Search</button>';
+  h += '" placeholder="';
+  h += t('Search plugins...');
+  h += '" autocomplete="off">';
+  h += '<button type="submit">';
+  h += t('Search');
+  h += '</button>';
   h += '</form>';
   h += '<div class="search-sort">';
-  h += '<span>Sort: </span>';
+  h += '<span>';
+  h += t('Sort:');
+  h += ' </span>';
   h += '<a href="/search?q=';
   h += query;
   h += '&sort=downloads"';
   if (sort.length === 0 || sort === 'downloads') h += ' class="active"';
-  h += '>Downloads</a>';
+  h += '>';
+  h += t('Downloads');
+  h += '</a>';
   h += '<a href="/search?q=';
   h += query;
   h += '&sort=rating"';
   if (sort === 'rating') h += ' class="active"';
-  h += '>Rating</a>';
+  h += '>';
+  h += t('Rating');
+  h += '</a>';
   h += '<a href="/search?q=';
   h += query;
   h += '&sort=updated"';
   if (sort === 'updated') h += ' class="active"';
-  h += '>Recent</a>';
+  h += '>';
+  h += t('Recent');
+  h += '</a>';
   h += '<a href="/search?q=';
   h += query;
   h += '&sort=name"';
   if (sort === 'name') h += ' class="active"';
-  h += '>Name</a>';
+  h += '>';
+  h += t('Name');
+  h += '</a>';
   h += '</div>';
   h += '<p class="search-count">';
   h += String(total);
-  h += ' plugin';
-  if (total !== 1) h += 's';
-  h += ' found</p>';
+  h += ' ';
+  h += t('plugins found');
+  h += '</p>';
   h += '</div>';
 
   if (rows.length === 0) {
-    h += '<div class="no-results"><p>No plugins found.</p>';
+    h += '<div class="no-results"><p>';
+    h += t('No plugins found.');
+    h += '</p>';
     if (query.length > 0) {
-      h += '<p>Try a different search term or <a href="/search">browse all plugins</a>.</p>';
+      h += '<p>';
+      h += t('Try a different search term or');
+      h += ' <a href="/search">';
+      h += t('browse all plugins');
+      h += '</a>.</p>';
     }
     h += '</div>';
   } else {
@@ -924,7 +1084,9 @@ app.get('/search', async (request: any, reply: any) => {
       formatNum(dl);
       h += '<span>';
       h += _formatted;
-      h += ' downloads</span>';
+      h += ' ';
+      h += t('downloads');
+      h += '</span>';
       if (rc > 0) {
         const avg = Math.floor((rs * 10) / rc) / 10;
         setStars(avg);
@@ -954,11 +1116,17 @@ app.get('/search', async (request: any, reply: any) => {
           h += '&sort=';
           h += sort;
         }
-        h += '" class="page-link">&laquo; Previous</a>';
+        h += '" class="page-link">';
+        h += t('Previous');
+        h += '</a>';
       }
-      h += '<span class="page-info">Page ';
+      h += '<span class="page-info">';
+      h += t('Page');
+      h += ' ';
       h += String(page);
-      h += ' of ';
+      h += ' ';
+      h += t('of');
+      h += ' ';
       h += String(totalPages);
       h += '</span>';
       if (page < totalPages) {
@@ -970,7 +1138,9 @@ app.get('/search', async (request: any, reply: any) => {
           h += '&sort=';
           h += sort;
         }
-        h += '" class="page-link">Next &raquo;</a>';
+        h += '" class="page-link">';
+        h += t('Next');
+        h += '</a>';
       }
       h += '</div>';
     }
@@ -1021,10 +1191,18 @@ app.get('/categories/*', async (request: any, reply: any) => {
   h += '<title>';
   escapeHtml(category);
   h += _escaped;
-  h += ' Plugins | Hone Marketplace</title>';
-  h += '<meta name="description" content="Browse ';
+  h += ' ';
+  h += t('Plugins');
+  h += ' | ';
+  h += t('Hone Marketplace');
+  h += '</title>';
+  h += '<meta name="description" content="';
+  h += t('Browse');
+  h += ' ';
   h += _escaped;
-  h += ' plugins for Hone IDE.">';
+  h += ' ';
+  h += t('plugins for Hone IDE.');
+  h += '">';
   h += '<link rel="canonical" href="https://marketplace.hone.codes/categories/';
   h += category;
   h += '">';
@@ -1036,16 +1214,22 @@ app.get('/categories/*', async (request: any, reply: any) => {
   h += '<h1>';
   escapeHtml(category);
   h += _escaped;
-  h += ' Plugins</h1>';
+  h += ' ';
+  h += t('Plugins');
+  h += '</h1>';
   h += '<p class="search-count">';
   h += String(total);
-  h += ' plugin';
-  if (total !== 1) h += 's';
+  h += ' ';
+  h += t('plugins');
   h += '</p>';
 
   if (rows.length === 0) {
-    h += '<div class="no-results"><p>No plugins in this category yet.</p>';
-    h += '<a href="/search" class="btn-primary">Browse All Plugins</a></div>';
+    h += '<div class="no-results"><p>';
+    h += t('No plugins in this category yet.');
+    h += '</p>';
+    h += '<a href="/search" class="btn-primary">';
+    h += t('Browse All Plugins');
+    h += '</a></div>';
   } else {
     h += '<div class="search-results">';
     for (let i = 0; i < rows.length; i++) {
@@ -1072,7 +1256,9 @@ app.get('/categories/*', async (request: any, reply: any) => {
       formatNum(Number(rows[i].downloads));
       h += '<span>';
       h += _formatted;
-      h += ' downloads</span>';
+      h += ' ';
+      h += t('downloads');
+      h += '</span>';
       const cRc = Number(rows[i].ratingCount);
       if (cRc > 0) {
         const cRs = Number(rows[i].ratingSum);
@@ -1093,11 +1279,17 @@ app.get('/categories/*', async (request: any, reply: any) => {
         h += category;
         h += '?page=';
         h += String(page - 1);
-        h += '" class="page-link">&laquo; Previous</a>';
+        h += '" class="page-link">';
+        h += t('Previous');
+        h += '</a>';
       }
-      h += '<span class="page-info">Page ';
+      h += '<span class="page-info">';
+      h += t('Page');
+      h += ' ';
       h += String(page);
-      h += ' of ';
+      h += ' ';
+      h += t('of');
+      h += ' ';
       h += String(totalPages);
       h += '</span>';
       if (page < totalPages) {
@@ -1105,7 +1297,9 @@ app.get('/categories/*', async (request: any, reply: any) => {
         h += category;
         h += '?page=';
         h += String(page + 1);
-        h += '" class="page-link">Next &raquo;</a>';
+        h += '" class="page-link">';
+        h += t('Next');
+        h += '</a>';
       }
       h += '</div>';
     }
@@ -1138,12 +1332,20 @@ app.get('/publishers/*', async (request: any, reply: any) => {
   if (pubRows.length === 0) {
     reply.status(404);
     let h = HEAD_OPEN;
-    h += '<title>Publisher Not Found | Hone Marketplace</title>';
+    h += '<title>';
+    h += t('Publisher Not Found');
+    h += ' | ';
+    h += t('Hone Marketplace');
+    h += '</title>';
     h += CSS_LINK;
     h += '</head><body>';
     h += NAV;
-    h += '<main class="container"><h1>Publisher not found</h1>';
-    h += '<a href="/" class="btn-primary">Back to Marketplace</a></main>';
+    h += '<main class="container"><h1>';
+    h += t('Publisher not found');
+    h += '</h1>';
+    h += '<a href="/" class="btn-primary">';
+    h += t('Back to Marketplace');
+    h += '</a></main>';
     h += FOOTER;
     h += '</body></html>';
     reply.send(h);
@@ -1166,10 +1368,16 @@ app.get('/publishers/*', async (request: any, reply: any) => {
   h += '<title>';
   escapeHtml(pubDisplay);
   h += _escaped;
-  h += ' | Hone Marketplace</title>';
-  h += '<meta name="description" content="Plugins by ';
+  h += ' | ';
+  h += t('Hone Marketplace');
+  h += '</title>';
+  h += '<meta name="description" content="';
+  h += t('Plugins by');
+  h += ' ';
   h += _escaped;
-  h += ' on Hone Marketplace.">';
+  h += ' ';
+  h += t('on Hone Marketplace.');
+  h += '">';
   h += '<link rel="canonical" href="https://marketplace.hone.codes/publishers/';
   h += username;
   h += '">';
@@ -1189,7 +1397,9 @@ app.get('/publishers/*', async (request: any, reply: any) => {
   escapeHtml(pubDisplay);
   h += _escaped;
   if (pubVTier === 'domain' || pubVTier === 'organization') {
-    h += ' <span class="verified-badge" title="Verified Publisher">&#10003;</span>';
+    h += ' <span class="verified-badge" title="';
+    h += t('Verified Publisher');
+    h += '">&#10003;</span>';
   }
   h += '</h1>';
   if (pubBio.length > 0) {
@@ -1210,8 +1420,8 @@ app.get('/publishers/*', async (request: any, reply: any) => {
 
   h += '<h2>';
   h += String(plugins.length);
-  h += ' Plugin';
-  if (plugins.length !== 1) h += 's';
+  h += ' ';
+  h += t('Plugins');
   h += '</h2>';
 
   if (plugins.length > 0) {
@@ -1240,7 +1450,9 @@ app.get('/publishers/*', async (request: any, reply: any) => {
       formatNum(Number(plugins[i].downloads));
       h += '<span>';
       h += _formatted;
-      h += ' downloads</span>';
+      h += ' ';
+      h += t('downloads');
+      h += '</span>';
       const pRc = Number(plugins[i].ratingCount);
       if (pRc > 0) {
         const pRs = Number(plugins[i].ratingSum);

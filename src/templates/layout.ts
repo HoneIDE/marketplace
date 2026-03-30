@@ -3,6 +3,8 @@
  * These are NOT called from async route handlers (Perry constraint).
  */
 
+import { t } from 'perry/i18n';
+
 export function htmlHead(title: string, description: string, canonicalUrl: string, extra: string): string {
   let h = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">';
   h += '<meta name="viewport" content="width=device-width,initial-scale=1">';
@@ -25,11 +27,19 @@ export function htmlHead(title: string, description: string, canonicalUrl: strin
 
 export function navbar(): string {
   let h = '<nav class="navbar"><div class="nav-inner">';
-  h += '<a href="/" class="nav-brand">Hone Marketplace</a>';
+  h += '<a href="/" class="nav-brand">';
+  h += t('Hone Marketplace');
+  h += '</a>';
   h += '<div class="nav-links">';
-  h += '<a href="/search">Browse</a>';
-  h += '<a href="/categories/Languages">Categories</a>';
-  h += '<a href="https://hone.dev" class="btn-cta">Get Hone</a>';
+  h += '<a href="/search">';
+  h += t('Browse');
+  h += '</a>';
+  h += '<a href="/categories/Languages">';
+  h += t('Categories');
+  h += '</a>';
+  h += '<a href="https://hone.dev" class="btn-cta">';
+  h += t('Get Hone');
+  h += '</a>';
   h += '</div>';
   h += '</div></nav>';
   return h;
@@ -38,19 +48,35 @@ export function navbar(): string {
 export function footer(): string {
   let h = '<footer class="site-footer"><div class="footer-inner">';
   h += '<div class="footer-grid">';
-  h += '<div class="footer-col"><h4>Hone IDE</h4><ul>';
-  h += '<li><a href="https://hone.dev">Download</a></li>';
-  h += '<li><a href="https://hone.dev/docs">Documentation</a></li>';
+  h += '<div class="footer-col"><h4>';
+  h += t('Hone IDE');
+  h += '</h4><ul>';
+  h += '<li><a href="https://hone.dev">';
+  h += t('Download');
+  h += '</a></li>';
+  h += '<li><a href="https://hone.dev/docs">';
+  h += t('Documentation');
+  h += '</a></li>';
   h += '</ul></div>';
-  h += '<div class="footer-col"><h4>Marketplace</h4><ul>';
-  h += '<li><a href="/search">Browse Plugins</a></li>';
-  h += '<li><a href="/categories/Languages">Categories</a></li>';
+  h += '<div class="footer-col"><h4>';
+  h += t('Marketplace');
+  h += '</h4><ul>';
+  h += '<li><a href="/search">';
+  h += t('Browse Plugins');
+  h += '</a></li>';
+  h += '<li><a href="/categories/Languages">';
+  h += t('Categories');
+  h += '</a></li>';
   h += '</ul></div>';
-  h += '<div class="footer-col"><h4>Community</h4><ul>';
+  h += '<div class="footer-col"><h4>';
+  h += t('Community');
+  h += '</h4><ul>';
   h += '<li><a href="https://discord.gg/hone">Discord</a></li>';
   h += '</ul></div>';
   h += '</div>';
-  h += '<div class="footer-copy"><p>&copy; 2026 Hone. All rights reserved.</p></div>';
+  h += '<div class="footer-copy"><p>';
+  h += t('Copyright 2026 Hone. All rights reserved.');
+  h += '</p></div>';
   h += '</div></footer>';
   return h;
 }

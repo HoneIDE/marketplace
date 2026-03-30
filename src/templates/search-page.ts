@@ -2,6 +2,7 @@
  * Search results page template — sync function for testing/pre-rendering.
  */
 
+import { t } from 'perry/i18n';
 import { wrapPage, escapeAttr } from './layout';
 
 export interface SearchResult {
@@ -25,10 +26,10 @@ export interface SearchPageData {
 }
 
 function tierLabel(tier: number): string {
-  if (tier === 1) return 'UI Only';
-  if (tier === 2) return 'Standard';
-  if (tier === 3) return 'High Privilege';
-  return 'Unknown';
+  if (tier === 1) return t('UI Only');
+  if (tier === 2) return t('Standard');
+  if (tier === 3) return t('High Privilege');
+  return t('Unknown');
 }
 
 function stars(rating: number): string {
@@ -42,9 +43,9 @@ function stars(rating: number): string {
 export function renderSearchPage(data: SearchPageData): string {
   let title = '';
   if (data.query.length > 0) {
-    title = 'Search: ' + data.query + ' | Hone Marketplace';
+    title = t('Search') + ': ' + data.query + ' | ' + t('Hone Marketplace');
   } else {
-    title = 'Browse Plugins | Hone Marketplace';
+    title = t('Browse Plugins') + ' | ' + t('Hone Marketplace');
   }
 
   let headExtra = '';
@@ -57,25 +58,32 @@ export function renderSearchPage(data: SearchPageData): string {
   body += '<div class="search-header">';
   body += '<h1>';
   if (data.query.length > 0) {
-    body += 'Results for &quot;';
+    body += t('Results for');
+    body += ' &quot;';
     body += escapeAttr(data.query);
     body += '&quot;';
   } else {
-    body += 'Browse Plugins';
+    body += t('Browse Plugins');
   }
   body += '</h1>';
 
   body += '<form class="search-form" action="/search" method="get">';
   body += '<input type="text" name="q" value="';
   body += escapeAttr(data.query);
-  body += '" placeholder="Search plugins...">';
-  body += '<button type="submit">Search</button>';
+  body += '" placeholder="';
+  body += t('Search plugins...');
+  body += '">';
+  body += '<button type="submit">';
+  body += t('Search');
+  body += '</button>';
   body += '</form>';
 
   body += '<div class="search-sort">';
-  body += '<span>Sort: </span>';
+  body += '<span>';
+  body += t('Sort:');
+  body += ' </span>';
   const sorts = ['downloads', 'rating', 'updated', 'name'];
-  const sortLabels = ['Downloads', 'Rating', 'Recent', 'Name'];
+  const sortLabels = [t('Downloads'), t('Rating'), t('Recent'), t('Name')];
   for (let i = 0; i < sorts.length; i++) {
     body += '<a href="/search?q=';
     body += data.query;
@@ -93,12 +101,14 @@ export function renderSearchPage(data: SearchPageData): string {
 
   body += '<p class="search-count">';
   body += String(data.total);
-  body += ' plugin';
-  if (data.total !== 1) body += 's';
-  body += ' found</p></div>';
+  body += ' ';
+  body += t('plugins found');
+  body += '</p></div>';
 
   if (data.results.length === 0) {
-    body += '<div class="no-results"><p>No plugins found.</p></div>';
+    body += '<div class="no-results"><p>';
+    body += t('No plugins found.');
+    body += '</p></div>';
   } else {
     body += '<div class="search-results">';
     for (let i = 0; i < data.results.length; i++) {
@@ -120,7 +130,9 @@ export function renderSearchPage(data: SearchPageData): string {
       body += '</p><div class="result-meta">';
       body += '<span>';
       body += String(r.downloads);
-      body += ' downloads</span>';
+      body += ' ';
+      body += t('downloads');
+      body += '</span>';
       if (r.ratingCount > 0) {
         body += '<span class="stars">';
         body += stars(r.ratingValue);
@@ -143,11 +155,17 @@ export function renderSearchPage(data: SearchPageData): string {
         body += data.query;
         body += '&page=';
         body += String(data.page - 1);
-        body += '" class="page-link">&laquo; Previous</a>';
+        body += '" class="page-link">';
+        body += t('Previous');
+        body += '</a>';
       }
-      body += '<span class="page-info">Page ';
+      body += '<span class="page-info">';
+      body += t('Page');
+      body += ' ';
       body += String(data.page);
-      body += ' of ';
+      body += ' ';
+      body += t('of');
+      body += ' ';
       body += String(data.totalPages);
       body += '</span>';
       if (data.page < data.totalPages) {
@@ -155,7 +173,9 @@ export function renderSearchPage(data: SearchPageData): string {
         body += data.query;
         body += '&page=';
         body += String(data.page + 1);
-        body += '" class="page-link">Next &raquo;</a>';
+        body += '" class="page-link">';
+        body += t('Next');
+        body += '</a>';
       }
       body += '</div>';
     }
@@ -165,7 +185,7 @@ export function renderSearchPage(data: SearchPageData): string {
 
   return wrapPage(
     title,
-    'Search Hone IDE plugins' + (data.query.length > 0 ? ' for ' + data.query : ''),
+    t('Search Hone IDE plugins') + (data.query.length > 0 ? ' ' + data.query : ''),
     'https://marketplace.hone.codes/search',
     headExtra,
     body

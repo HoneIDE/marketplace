@@ -2,6 +2,7 @@
  * Plugin detail page template — sync function for testing/pre-rendering.
  */
 
+import { t } from 'perry/i18n';
 import { wrapPage, escapeAttr } from './layout';
 import { openGraphMeta, pluginJsonLd } from './seo';
 
@@ -27,10 +28,10 @@ export interface PluginPageData {
 }
 
 function tierLabel(tier: number): string {
-  if (tier === 1) return 'UI Only';
-  if (tier === 2) return 'Standard';
-  if (tier === 3) return 'High Privilege';
-  return 'Unknown';
+  if (tier === 1) return t('UI Only');
+  if (tier === 2) return t('Standard');
+  if (tier === 3) return t('High Privilege');
+  return t('Unknown');
 }
 
 function stars(rating: number): string {
@@ -107,7 +108,9 @@ export function renderPluginPage(data: PluginPageData): string {
   body += '<div class="plugin-actions">';
   body += '<button class="btn-install" onclick="copyInstall(\'';
   body += data.name;
-  body += '\')">Install</button>';
+  body += '\')">';
+  body += t('Install');
+  body += '</button>';
   body += '<div class="install-cmd"><code>hone plugin install ';
   body += data.name;
   body += '</code></div>';
@@ -117,13 +120,19 @@ export function renderPluginPage(data: PluginPageData): string {
   body += '<div class="plugin-tabs">';
   body += '<a href="/plugins/';
   body += data.name;
-  body += '" class="tab active">README</a>';
+  body += '" class="tab active">';
+  body += t('README');
+  body += '</a>';
   body += '<a href="/plugins/';
   body += data.name;
-  body += '/versions" class="tab">Versions</a>';
+  body += '/versions" class="tab">';
+  body += t('Versions');
+  body += '</a>';
   body += '<a href="/plugins/';
   body += data.name;
-  body += '/capabilities" class="tab">Capabilities</a>';
+  body += '/capabilities" class="tab">';
+  body += t('Capabilities');
+  body += '</a>';
   body += '</div>';
 
   // Content
@@ -134,35 +143,49 @@ export function renderPluginPage(data: PluginPageData): string {
     body += escapeAttr(data.readme);
     body += '</pre></div>';
   } else {
-    body += '<p class="no-readme">No README provided.</p>';
+    body += '<p class="no-readme">';
+    body += t('No README provided.');
+    body += '</p>';
   }
   body += '</div>';
 
   // Sidebar
   body += '<aside class="plugin-sidebar">';
-  body += '<div class="sidebar-section"><h4>Details</h4><dl>';
+  body += '<div class="sidebar-section"><h4>';
+  body += t('Details');
+  body += '</h4><dl>';
   if (data.license.length > 0) {
-    body += '<dt>License</dt><dd>';
+    body += '<dt>';
+    body += t('License');
+    body += '</dt><dd>';
     body += escapeAttr(data.license);
     body += '</dd>';
   }
   if (data.repository.length > 0) {
-    body += '<dt>Repository</dt><dd><a href="';
+    body += '<dt>';
+    body += t('Repository');
+    body += '</dt><dd><a href="';
     body += data.repository;
     body += '">';
     body += escapeAttr(data.repository);
     body += '</a></dd>';
   }
-  body += '<dt>Downloads</dt><dd>';
+  body += '<dt>';
+  body += t('Downloads');
+  body += '</dt><dd>';
   body += String(data.downloads);
   body += '</dd>';
-  body += '<dt>Version</dt><dd>';
+  body += '<dt>';
+  body += t('Version');
+  body += '</dt><dd>';
   body += data.version;
   body += '</dd>';
   body += '</dl></div>';
 
   if (data.tags.length > 0) {
-    body += '<div class="sidebar-section"><h4>Tags</h4><div class="tag-list">';
+    body += '<div class="sidebar-section"><h4>';
+    body += t('Tags');
+    body += '</h4><div class="tag-list">';
     for (let i = 0; i < data.tags.length; i++) {
       body += '<a href="/search?q=';
       body += data.tags[i];
@@ -178,7 +201,7 @@ export function renderPluginPage(data: PluginPageData): string {
   body += '</div>'; // container
 
   return wrapPage(
-    data.displayName + ' | Hone Marketplace',
+    data.displayName + ' | ' + t('Hone Marketplace'),
     data.description,
     'https://marketplace.hone.codes/plugins/' + data.name,
     headExtra,

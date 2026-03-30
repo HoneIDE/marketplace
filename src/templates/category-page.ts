@@ -2,6 +2,7 @@
  * Category listing page template — sync function for testing/pre-rendering.
  */
 
+import { t } from 'perry/i18n';
 import { wrapPage, escapeAttr } from './layout';
 
 export interface CategoryPageData {
@@ -24,16 +25,20 @@ export function renderCategoryPage(data: CategoryPageData): string {
   let body = '';
   body += '<div class="container">';
   body += '<h1>';
-  body += escapeAttr(data.category);
-  body += ' Plugins</h1>';
+  body += escapeAttr(t(data.category));
+  body += ' ';
+  body += t('Plugins');
+  body += '</h1>';
   body += '<p class="search-count">';
   body += String(data.total);
-  body += ' plugin';
-  if (data.total !== 1) body += 's';
+  body += ' ';
+  body += t('plugins');
   body += '</p>';
 
   if (data.plugins.length === 0) {
-    body += '<div class="no-results"><p>No plugins in this category yet.</p></div>';
+    body += '<div class="no-results"><p>';
+    body += t('No plugins in this category yet.');
+    body += '</p></div>';
   } else {
     body += '<div class="search-results">';
     for (let i = 0; i < data.plugins.length; i++) {
@@ -54,7 +59,9 @@ export function renderCategoryPage(data: CategoryPageData): string {
       body += escapeAttr(p.description);
       body += '</p><div class="result-meta"><span>';
       body += String(p.downloads);
-      body += ' downloads</span>';
+      body += ' ';
+      body += t('downloads');
+      body += '</span>';
       if (p.ratingCount > 0) {
         body += '<span class="stars">';
         body += stars(p.ratingValue);
@@ -71,11 +78,17 @@ export function renderCategoryPage(data: CategoryPageData): string {
         body += data.category;
         body += '?page=';
         body += String(data.page - 1);
-        body += '" class="page-link">&laquo; Previous</a>';
+        body += '" class="page-link">';
+        body += t('Previous');
+        body += '</a>';
       }
-      body += '<span class="page-info">Page ';
+      body += '<span class="page-info">';
+      body += t('Page');
+      body += ' ';
       body += String(data.page);
-      body += ' of ';
+      body += ' ';
+      body += t('of');
+      body += ' ';
       body += String(data.totalPages);
       body += '</span>';
       if (data.page < data.totalPages) {
@@ -83,7 +96,9 @@ export function renderCategoryPage(data: CategoryPageData): string {
         body += data.category;
         body += '?page=';
         body += String(data.page + 1);
-        body += '" class="page-link">Next &raquo;</a>';
+        body += '" class="page-link">';
+        body += t('Next');
+        body += '</a>';
       }
       body += '</div>';
     }
@@ -92,8 +107,8 @@ export function renderCategoryPage(data: CategoryPageData): string {
   body += '</div>';
 
   return wrapPage(
-    data.category + ' Plugins | Hone Marketplace',
-    'Browse ' + data.category + ' plugins for Hone IDE.',
+    t(data.category) + ' ' + t('Plugins') + ' | ' + t('Hone Marketplace'),
+    t('Browse') + ' ' + t(data.category) + ' ' + t('plugins for Hone IDE.'),
     'https://marketplace.hone.codes/categories/' + data.category,
     '',
     body

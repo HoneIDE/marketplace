@@ -2,6 +2,7 @@
  * Publisher profile page template — sync function for testing/pre-rendering.
  */
 
+import { t } from 'perry/i18n';
 import { wrapPage, escapeAttr } from './layout';
 
 export interface PublisherPageData {
@@ -37,7 +38,9 @@ export function renderPublisherPage(data: PublisherPageData): string {
   body += '<h1>';
   body += escapeAttr(data.displayName.length > 0 ? data.displayName : data.username);
   if (data.verified) {
-    body += ' <span class="verified-badge" title="Verified Publisher">&#10003;</span>';
+    body += ' <span class="verified-badge" title="';
+    body += t('Verified Publisher');
+    body += '">&#10003;</span>';
   }
   body += '</h1>';
   if (data.bio.length > 0) {
@@ -57,8 +60,8 @@ export function renderPublisherPage(data: PublisherPageData): string {
   // Plugin list
   body += '<h2>';
   body += String(data.plugins.length);
-  body += ' Plugin';
-  if (data.plugins.length !== 1) body += 's';
+  body += ' ';
+  body += t('Plugins');
   body += '</h2>';
 
   if (data.plugins.length > 0) {
@@ -81,7 +84,9 @@ export function renderPublisherPage(data: PublisherPageData): string {
       body += escapeAttr(p.description);
       body += '</p><div class="result-meta"><span>';
       body += String(p.downloads);
-      body += ' downloads</span>';
+      body += ' ';
+      body += t('downloads');
+      body += '</span>';
       if (p.ratingCount > 0) {
         body += '<span class="stars">';
         body += stars(p.ratingValue);
@@ -95,8 +100,8 @@ export function renderPublisherPage(data: PublisherPageData): string {
   body += '</div>';
 
   return wrapPage(
-    data.displayName + ' | Hone Marketplace',
-    'Plugins by ' + data.displayName + ' on Hone Marketplace.',
+    data.displayName + ' | ' + t('Hone Marketplace'),
+    t('Plugins by') + ' ' + data.displayName + ' ' + t('on Hone Marketplace.'),
     'https://marketplace.hone.codes/publishers/' + data.username,
     '',
     body
